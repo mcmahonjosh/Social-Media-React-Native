@@ -5,7 +5,7 @@ const Header = () => {
   return (
     <View style={styles.container}>
         <TouchableOpacity>
-            <Text style={{ color: 'white' }}>HEADER</Text>
+            <Text style={{ color: 'white' , fontSize: 27}}>Instagram</Text>
         </TouchableOpacity>
 
         <View style={styles.iconsContainer}>
