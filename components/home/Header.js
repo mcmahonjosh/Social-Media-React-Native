@@ -5,7 +5,7 @@ const Header = () => {
   return (
     <View style={styles.container}>
         <TouchableOpacity>
-            <Text style={{ color: 'white'}}>HEADER</Text>
+            <Text style={{ color: 'white' }}>HEADER</Text>
         </TouchableOpacity>
 
         <View style={styles.iconsContainer}>
@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         flexDirection: 'row',
         marginHorizontal: 20,
-
+        marginBottom: 10,
     },
     iconsContainer: {
         flexDirection: 'row',
@@ -63,6 +63,10 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         zIndex: 100,
+    },
+    unreadBadgeText: {
+        color: 'white',
+        fontWeight: 600,
     }
 })
 
