@@ -12,7 +12,7 @@ const Stories = () => {
                 <View key={index} style={{ alignItems: 'center'}}>
                     <Image source={{uri: story.image}} style={styles.story}/>
                     <Text style={{ color: 'white' }}>{
-                        story.user.length > 11 ? story.user.slice(0,10).toLocaleLowerCase() + '...' 
+                        story.user.length > 11 ? story.user.slice(0,6).toLocaleLowerCase() + '...' 
                         : story.user.toLocaleLowerCase()
                         }</Text>
                 </View>
@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
         width: 80,
         height: 80,
         borderRadius: 50,
-        marginLeft: 6,
+        marginLeft: 10,
         borderWidth: 2.5,
         borderColor: '#ff8501',
     }
