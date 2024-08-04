@@ -1,9 +1,8 @@
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import React from 'react';
 import { Divider, Image } from 'react-native-elements';
-import { getAuth } from 'firebase/auth';
-import { getFirestore, collection, doc, updateDoc, arrayUnion, arrayRemove } from 'firebase/firestore';
-import { db } from '../../firebase';  // Adjust the import based on your project structure
+import { doc, updateDoc, arrayUnion, arrayRemove, getFirestore } from 'firebase/firestore';
+import { db, auth} from '../../firebase';
 
 const postFooterIcons = [
   {
@@ -27,16 +26,21 @@ const postFooterIcons = [
 ];
 
 const Post = ({ post }) => {
+
+
   const handleLike = async (post) => {
-    const auth = getAuth();
-    const currentUser = auth.currentUser;
-    const currentLikeStatus = !(post.likes_by_users && post.likes_by_users.includes(currentUser.email));
 
-    const postRef = doc(collection(db, 'users', post.owner_email, 'posts'), post.id);
-
+    const currentLikeStatus = !post.likes_by_users.includes(auth.currentUser.email);
+    console.log("tyring it");
+    console.log(post.id);
+    const postRef = doc(db, 'users', post.owner_email, 'posts', post.id);
+    
     try {
+      console.log("tyring it");
       await updateDoc(postRef, {
-        likes_by_users: currentLikeStatus ? arrayUnion(currentUser.email) : arrayRemove(currentUser.email),
+        likes_by_users: currentLikeStatus
+          ? arrayUnion(auth.currentUser.email)
+          : arrayRemove(auth.currentUser.email),
       });
       console.log('Document successfully updated!');
     } catch (error) {
@@ -46,7 +50,7 @@ const Post = ({ post }) => {
 
   return (
     <View style={{ marginBottom: 30 }}>
-      <Divider width={1} orientation='vertical' />
+      <Divider width={1} orientation="vertical" />
       <PostHeader post={post} />
       <PostImage post={post} />
       <View style={{ marginHorizontal: 15, marginTop: 10 }}>
@@ -64,9 +68,7 @@ const PostHeader = ({ post }) => (
   <View style={{ flexDirection: 'row', justifyContent: 'space-between', margin: 5, alignItems: 'center' }}>
     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
       <Image source={{ uri: post.profile_picture }} style={styles.story} />
-      <Text style={{ color: 'white', marginLeft: 5, fontWeight: '700' }}>
-        {post.user}
-      </Text>
+      <Text style={{ color: 'white', marginLeft: 5, fontWeight: '700' }}>{post.user}</Text>
     </View>
     <Text style={{ color: 'white', fontWeight: '900' }}>...</Text>
   </View>
@@ -74,10 +76,7 @@ const PostHeader = ({ post }) => (
 
 const PostImage = ({ post }) => (
   <View style={{ width: '100%', height: 400 }}>
-    <Image
-      source={{ uri: post.imageUrl }}
-      style={{ height: '100%', resizeMode: 'cover' }}
-    />
+    <Image source={{ uri: post.imageUrl }} style={{ height: '100%', resizeMode: 'cover' }} />
   </View>
 );
 
@@ -85,10 +84,7 @@ const PostFooter = ({ handleLike, post }) => (
   <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
     <View style={styles.leftFooterIconsContainer}>
       <TouchableOpacity onPress={() => handleLike(post)}>
-        <Image
-          style={styles.footerIcon}
-          source={{ uri: post.likes_by_users && post.likes_by_users.includes(getAuth().currentUser.email) ? postFooterIcons[0].likedImageUrl : postFooterIcons[0].imageUrl }}
-        />
+        <Image style={styles.footerIcon} source={{ uri: postFooterIcons[0].imageUrl }} />
       </TouchableOpacity>
       <Icon imgStyle={styles.footerIcon} imgUrl={postFooterIcons[1].imageUrl} />
       <Icon imgStyle={styles.footerIcon} imgUrl={postFooterIcons[2].imageUrl} />
@@ -107,7 +103,7 @@ const Icon = ({ imgStyle, imgUrl }) => (
 
 const Likes = ({ post }) => (
   <View style={{ flexDirection: 'row', margin: 4 }}>
-    <Text style={{ color: 'white', fontWeight: '600' }}>{post.likes_by_users ? post.likes_by_users.length.toLocaleString('en') : 0} likes</Text>
+    <Text style={{ color: 'white', fontWeight: 600 }}>{post.likes_by_users.length.toLocaleString('en')} likes</Text>
   </View>
 );
 
@@ -124,7 +120,8 @@ const CommentSection = ({ post }) => (
   <View style={{ marginTop: 5, marginLeft: 14 }}>
     {!!post.comments.length && (
       <Text style={{ color: 'gray' }}>
-        View {post.comments.length > 1 ? 'all' : ''} {post.comments.length} {post.comments.length > 1 ? 'comments' : 'comment'}
+        View{post.comments.length > 1 ? ' all' : ''} {post.comments.length}{' '}
+        {post.comments.length > 1 ? 'comments' : 'comment'}
       </Text>
     )}
   </View>
@@ -136,7 +133,7 @@ const Comments = ({ post }) => (
       <View key={index} style={{ flexDirection: 'row', marginTop: 5, marginLeft: 14 }}>
         <Text style={{ color: 'white' }}>
           <Text style={{ fontWeight: '600' }}>{comment.user}</Text>
-          <Text> {comment.comment}</Text>
+          <Text>{' '}{comment.comment}</Text>
         </Text>
       </View>
     ))}

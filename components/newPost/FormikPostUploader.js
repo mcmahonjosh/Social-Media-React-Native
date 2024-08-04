@@ -1,12 +1,14 @@
+import { db, auth, app } from '../../firebase';
 import { View, Text, TextInput } from 'react-native';
 import React, { useState, useEffect } from 'react';
 import * as Yup from 'yup';
 import { Formik } from 'formik';
 import { Button, Divider, Image } from 'react-native-elements';
 import validUrl from 'valid-url';
-import { db, auth } from '../../firebase';
-import { collection, query, where, limit, onSnapshot, addDoc } from 'firebase/firestore';
-import { getAuth } from 'firebase/auth';
+import { collection, query, where, limit, onSnapshot, addDoc, getFirestore } from 'firebase/firestore';
+
+
+
 
 // Placeholder image URL
 const PLACEHOLDER_IMG = 'https://img.icons8.com/?size=100&id=112856&format=png&color=FFFFFF';
@@ -23,7 +25,7 @@ const FormikPostUploader = ({ navigation }) => {
 
   // Function to fetch user data from Firestore
   const getUserName = () => {
-    const user = getAuth().currentUser;
+    const user = auth.currentUser;
 
     // Create a query to get the user's document from the 'users' collection
     const userQuery = query(
@@ -54,22 +56,30 @@ const FormikPostUploader = ({ navigation }) => {
   // Function to upload post to Firestore
   const uploadPostToFirebase = async (imageUrl, caption) => {
     try {
-      await addDoc(collection(db, 'users', auth.currentUser.email, 'posts'), {
+      // Create a new document and get the DocumentReference
+      const docRef = await addDoc(collection(db, 'users', auth.currentUser.email, 'posts'), {
         imageUrl: imageUrl,
         user: currentLoggedInUser.username,
         profilePicture: currentLoggedInUser.profilePicture,
         owner_uid: auth.currentUser.uid,
-        owner_email: firebase.auth().currentUser.email,
+        owner_email: auth.currentUser.email,
         caption: caption,
         createdAt: new Date(), // Use new Date() for now; use FieldValue.serverTimestamp() if using in a Cloud Function
         likes_by_users: [],
         comments: [],
       });
+  
+      // Get the document ID
+      const docId = docRef.id;
+      console.log('Document written with ID:', docId);
+  
+      // Optionally navigate or perform further actions with the docId
       navigation.goBack();
     } catch (error) {
       console.error('Error uploading post:', error.message);
     }
   };
+  
 
   return (
     <Formik 

@@ -17,16 +17,19 @@ const HomeScreen = ({navigation}) => {
   useEffect(() => {
     // Create a query to get all documents from the 'posts' collection group
     const postsQuery = collectionGroup(db, 'posts');
-
+  
     // Subscribe to the query with onSnapshot
     const unsubscribe = onSnapshot(postsQuery, (snapshot) => {
-      const fetchedPosts = snapshot.docs.map(doc => doc.data());
+      const fetchedPosts = snapshot.docs.map(doc => ({
+        ...doc.data(),  // Spread the document data
+        id: doc.id,     // Add the document ID
+      }));
       setPosts(fetchedPosts);
-      console.log(fetchedPosts);
+      console.log(fetchedPosts); // This should now include the document IDs
     }, (error) => {
       console.error('Error fetching posts:', error);
     });
-
+  
     // Clean up the subscription on component unmount
     return () => unsubscribe();
   }, []);
