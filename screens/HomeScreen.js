@@ -4,7 +4,7 @@ import Header from '../components/home/Header'
 import Stories from '../components/home/Stories'
 import Post from '../components/home/Post'
 import { POSTS } from '../data/posts'
-import { getFirestore, collectionGroup, onSnapshot } from 'firebase/firestore';
+import { getFirestore, collectionGroup, onSnapshot, query, orderBy } from 'firebase/firestore';
 import BottomTabs, { bottomTabIcons } from '../components/home/BottomTabs'
 import { db } from '../firebase'
 
@@ -16,7 +16,11 @@ const HomeScreen = ({navigation}) => {
 
   useEffect(() => {
     // Create a query to get all documents from the 'posts' collection group
-    const postsQuery = collectionGroup(db, 'posts');
+    const postsQuery = query(
+      collectionGroup(db, 'posts'),
+      orderBy('createdAt', 'desc')  // Order by 'createdAt' in descending order
+    );
+
   
     // Subscribe to the query with onSnapshot
     const unsubscribe = onSnapshot(postsQuery, (snapshot) => {

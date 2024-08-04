@@ -8,7 +8,7 @@ const postFooterIcons = [
   {
     name: 'Like',
     imageUrl: 'https://img.icons8.com/?size=100&id=87&format=png&color=FFFFFF',
-    likedImageUrl: 'https://img.icons8.com/?size=100&id=7697&format=png&color=FFFFFF',
+    likedImageUrl: 'https://img.icons8.com/?size=100&id=V4c6yYlvXtzy&format=png&color=000000',
   },
   {
     name: 'Comment',
@@ -84,7 +84,7 @@ const PostFooter = ({ handleLike, post }) => (
   <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
     <View style={styles.leftFooterIconsContainer}>
       <TouchableOpacity onPress={() => handleLike(post)}>
-        <Image style={styles.footerIcon} source={{ uri: postFooterIcons[0].imageUrl }} />
+        <Image style={styles.footerIcon} source={{ uri: post.likes_by_users.includes(auth.currentUser.email) ? postFooterIcons[0].likedImageUrl : postFooterIcons[0].imageUrl }} />
       </TouchableOpacity>
       <Icon imgStyle={styles.footerIcon} imgUrl={postFooterIcons[1].imageUrl} />
       <Icon imgStyle={styles.footerIcon} imgUrl={postFooterIcons[2].imageUrl} />
